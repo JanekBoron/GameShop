@@ -25,11 +25,16 @@ builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-builder.Services.AddAuthentication().AddFacebook(options =>
+var facebookAppId = builder.Configuration["Authentication:Facebook:AppId"];
+var facebookAppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+if (!string.IsNullOrEmpty(facebookAppId) && !string.IsNullOrEmpty(facebookAppSecret))
 {
-    options.AppId = "1112940129625108";
-    options.AppSecret = "e32b177e0c668455280d2e0647cca42d";
-});
+    builder.Services.AddAuthentication().AddFacebook(options =>
+    {
+        options.AppId = facebookAppId;
+        options.AppSecret = facebookAppSecret;
+    });
+}
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
